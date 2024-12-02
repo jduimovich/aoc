@@ -1,0 +1,45 @@
+import 'dart:io';
+
+bool isSafe(digits) {
+    var increasing = 0;
+    var decreasing = 0;
+    for (var idx = 0; idx < digits.length - 1; idx = idx + 1) {
+        var diff = int.parse(digits[idx]) - int.parse(digits[idx + 1]);
+        if (diff > 0 && diff <= 3) { decreasing = decreasing + 1; }
+        if (diff < 0 && diff >= -3) { increasing = increasing + 1; }
+    }
+    return (increasing >= digits.length - 1 || decreasing >= digits.length - 1);
+}
+void main() async {
+    var config = File('data');
+    var lines = await config.readAsLines();
+    var good = 0;
+    var bad = 0;
+    for (var line in lines) {
+        var digits = line.split(' ');
+        if (isSafe(digits)) {
+            print("line ${line} GOOD ");
+            good = good + 1;
+        } else {
+            print("line ${line} BAD checking skip ");
+            bool skipGood = false;
+            for (var skip = 0; skip < digits.length; skip = skip + 1) {
+                var newDigits = digits.sublist(0, skip) + digits.sublist(skip + 1, digits.length);
+                print("try ${digits} skipping ${skip}-> ${newDigits}");
+                if (isSafe(newDigits)) {
+                    print("line ${newDigits} GOOD ");
+                    skipGood = true;
+                }
+            }
+            if (skipGood) {
+                good = good + 1;
+            } else {
+                bad = bad + 1;
+            }
+        }
+    }
+    print("Good ${good}");
+    print("Bad ${bad}");
+    var total = good + bad;
+    print("Total ${total}");
+}
