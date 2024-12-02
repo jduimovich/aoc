@@ -1,9 +1,4 @@
-# Dependencies
-.psci_modules
-.spago
-bower_components
-node_modules
+# Dependencies 
+tmp/
 
-# Generated files
-.psci
-output
+# Generated files 
