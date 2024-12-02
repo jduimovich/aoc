@@ -1,0 +1,29 @@
+
+rm -rf tmp
+mkdir tmp
+L=tmp/left
+R=tmp/right
+I=tmp/show-your-work
+touch $L $R $I
+cat $1 | while read line
+do 
+    echo $line | cut -d ' ' -f 1 >> $L 
+    echo $line | cut -d ' ' -f 2 >> $R
+done
+sort < $L > tmp/tmp
+mv tmp/tmp $L
+sort < $R > tmp/tmp
+mv tmp/tmp $R
+ 
+exec 6<"$R"
+sum=0
+while read -r left
+do
+    read -r right <&6
+    diff=$(echo "${right} - ${left}" | bc)
+    diff=${diff#-}
+    sum=$(echo "${sum} + ${diff}" | bc)
+    echo "${left} ${right} ${diff} ${sum} " >> $I
+done <"$L"
+exec 6<&-
+echo "Sum is $sum"
